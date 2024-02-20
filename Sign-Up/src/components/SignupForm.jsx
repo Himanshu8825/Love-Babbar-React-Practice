@@ -1,10 +1,11 @@
-import React from "react";
 import { AiOutlineEye } from "react-icons/ai";
 import { AiOutlineEyeInvisible } from "react-icons/ai";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
+// eslint-disable-next-line react/prop-types
 const SignupForm = ({ setIsLoggedIn }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -12,7 +13,6 @@ const SignupForm = ({ setIsLoggedIn }) => {
     lastName: "",
     email: "",
     password: "",
-    confirmPassword: "",
   });
 
   const changeHandler = (e) => {
@@ -26,20 +26,19 @@ const SignupForm = ({ setIsLoggedIn }) => {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const submitHandler = (e) => {
+  const submitHandler = async(e) => {
     e.preventDefault();
-    if (formData.password != formData.confirmPassword) {
-      toast.error("Password does not match");
-      return;
+
+    const res = await axios.post("http://localhost:3001/signup",{
+      formData
+    });
+    if(res.status === 200){
+      setIsLoggedIn(true);
+      toast.success("Account Created ");
+      navigate("/dashbord");
     }
-    setIsLoggedIn(true);
-    toast.success("Account Created ");
-    const accountData = {
-      ...formData,
-    };
-    console.log("acoount data ", accountData);
-    navigate("/dashbord");
   };
+
   return (
     <div>
       <div>
@@ -47,7 +46,7 @@ const SignupForm = ({ setIsLoggedIn }) => {
         <button>Instructor</button>
       </div>
 
-      <form onSubmit={submitHandler}>
+      <form >
         <div>
           <label>
             <p>
@@ -108,23 +107,7 @@ const SignupForm = ({ setIsLoggedIn }) => {
           </span>
         </label>
 
-        <label>
-          <p>
-            Confirm Password <sup>*</sup>
-          </p>
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="Confirm password"
-            required
-            name="confirmPassword"
-            onChange={changeHandler}
-            value={formData.confirmPassword}
-          />
-          <span onClick={() => setShowPassword((prev) => !prev)}>
-            {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
-          </span>
-        </label>
-        <button>Create Account</button>
+        <button onClick={submitHandler}>Create Account</button>
       </form>
     </div>
   );
