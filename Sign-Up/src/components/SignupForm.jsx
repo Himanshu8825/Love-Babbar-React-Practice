@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
-// eslint-disable-next-line react/prop-types
+
 const SignupForm = ({ setIsLoggedIn }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
